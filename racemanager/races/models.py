@@ -5,6 +5,38 @@ from localflavor.us.models import USStateField, USPhoneNumberField
 from django.db import models
 
 
+TODAY = datetime.datetime.today()
+CURRENT_MONTH = datetime.datetime.today().month
+
+
+class UpcomingRaceManager(models.Manager):
+    """
+    Manager to get upcoming races.
+    """
+    def get_queryset(self):
+        return super(UpcomingRaceManager, self).get_queryset().filter(self.date__gte=TODAY)
+
+
+class UpcomingRacesForWeekendManager(models.Manager):
+    """
+    Manager to get upcoming weekend's races.
+    """
+    def get_queryset(self):
+        upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
+        lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
+        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(self.date__range=(lower_limit, upper_limit)
+
+
+class UpcomingRacesForMonthManager(models.Manager):
+    """
+    Manager to get this month's upcoming races after this weekend.
+    """
+    def get_queryset(self):
+        upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
+        lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
+        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(self.date__month=CURRENT_MONTH).exclude(self.date__range=(lower_limit, upper_limit)
+
+
 class Season(models.Model):
     """
     A season to hold races for a given year range.
@@ -142,6 +174,10 @@ class Race(models.Model):
         blank=True,
         default=''
     )
+    objects = models.Manager()
+    upcoming_races = UpcomingRaceManager()
+    upcoming_races_for_weekend = UpcomingRacesForWeekendManager()
+    upcoming_races_for_month = UpcomingRacesForMonthManager()
 
     class Meta:
         ordering = ['-date']
