@@ -1,6 +1,6 @@
 import datetime
 from geopy.geocoders import Nominatim
-from localflavor.us.models import USStateField, USPhoneNumberField
+from localflavor.us.models import USStateField, PhoneNumberField
 
 from django.db import models
 
@@ -14,7 +14,7 @@ class CurrentSeasonManager(models.Manager):
     Manager to get current season specified, or the latest by closing date.
     """
     def get_queryset(self):
-        return super(CurrentSeasonManager, self).get_queryset().filter(self.is_current_season=True).latest()[0]
+        return super(CurrentSeasonManager, self).get_queryset().filter(is_current_season).latest()[0]
 
 
 class UpcomingRaceManager(models.Manager):
@@ -22,7 +22,7 @@ class UpcomingRaceManager(models.Manager):
     Manager to get upcoming races.
     """
     def get_queryset(self):
-        return super(UpcomingRaceManager, self).get_queryset().filter(self.date__gte=TODAY)
+        return super(UpcomingRaceManager, self).get_queryset().filter(date__gte=TODAY)
 
 
 class UpcomingRacesForWeekendManager(models.Manager):
@@ -32,7 +32,7 @@ class UpcomingRacesForWeekendManager(models.Manager):
     def get_queryset(self):
         upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
         lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
-        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(self.date__range=(lower_limit, upper_limit)
+        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(date__range=(lower_limit, upper_limit))
 
 
 class UpcomingRacesForMonthManager(models.Manager):
@@ -42,7 +42,7 @@ class UpcomingRacesForMonthManager(models.Manager):
     def get_queryset(self):
         upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
         lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
-        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(self.date__month=CURRENT_MONTH).exclude(self.date__range=(lower_limit, upper_limit)
+        return super(UpcomingRacesForMonthManager, self).get_queryset().filter(date__month=CURRENT_MONTH).exclude(date__range=(lower_limit, upper_limit))
 
 
 class Season(models.Model):
@@ -98,7 +98,7 @@ class Organizer(models.Model):
         null=True
     )
     email = models.EmailField(
-        help_text='Optional.'
+        help_text='Optional.',
         blank=True,
         default=''
     )
@@ -177,7 +177,7 @@ class Race(models.Model):
         default='A brief description of the race course, ideally.'
     )
     pre_registration_link = models.URLField(
-        help_text='Optional.'
+        help_text='Optional.',
         blank=True,
         default=''
     )
