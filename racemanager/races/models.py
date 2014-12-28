@@ -9,6 +9,14 @@ TODAY = datetime.datetime.today()
 CURRENT_MONTH = datetime.datetime.today().month
 
 
+class CurrentSeasonManager(models.Manager):
+    """
+    Manager to get current season specified, or the latest by closing date.
+    """
+    def get_queryset(self):
+        return super(CurrentSeasonManager, self).get_queryset().filter(self.is_current_season=True).latest()[0]
+
+
 class UpcomingRaceManager(models.Manager):
     """
     Manager to get upcoming races.
@@ -42,20 +50,34 @@ class Season(models.Model):
     A season to hold races for a given year range.
     """
     opening_year = models.PositiveSmallIntegerField(
-        help_text='Can be used for primary year if needed. Ex. 2014.',
+        help_text='The year in which the season opens (i.e. 2014).',
     )
     closing_year = models.PositiveSmallIntegerField(
-        help_text='Optional. Ex. 2015.',
-        blank=True,
-        null=True
+        help_text='The year in which the season ends (i.e. 2015).',
     )
     slug = models.SlugField(
         help_text='Will populate from opening and/or closing year fields.',
         unique=True
     )
+    results_link = models.URLField(
+        help_text='Optional.',
+        blank=True,
+        default=''
+    )
+    results_upload = models.FileField(
+        help_text='Optional. PDF files only.',
+        blank=True,
+        default=''
+    )
+    is_current_season = models.BooleanField(
+        help_text='Indicates whether the season is the current season displayed',
+        default=False
+    )
+    objects = models.Manager()
+    current_season = CurrentSeasonManager()
 
     class Meta:
-        ordering = ['opening_year']
+        ordering = ['-closing_year']
 
     def __str__(self):
         return ('{}-{}'.format(self.opening_year, str(self.closing_year)[2:4]))
