@@ -1,0 +1,7 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+    {% for race in race_list %}
+        {{ race.date }}
+    {% endfor %}
+{% endblock content %}
