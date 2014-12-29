@@ -1,13 +1,17 @@
 import datetime
+import logging
 from geopy.geocoders import Nominatim
+from geopy.exc import GeopyError, GeocoderTimedOut
 from localflavor.us.models import USStateField, PhoneNumberField
 
 from django.db import models
 
 from racemanager.utils.validators import validate_file_type
 
-TODAY = datetime.datetime.today()
-CURRENT_MONTH = datetime.datetime.today().month
+TODAY = datetime.date.today()
+CURRENT_MONTH = datetime.date.today().month
+
+logger = logging.getLogger(__name__)
 
 
 class CurrentSeasonManager(models.Manager):
@@ -160,11 +164,20 @@ class Location(models.Model):
         """
         Geocode the location based on address and zip code.
         """
-        geolocator = Nominatim()
-        location = geolocator.geocode('{} {}'.format(self.address, self.zip_code))
-        self.latitude = location.latitude
-        self.longitude = location.longitude
-        super(Location, self).save(*args, **kwargs)
+        if self.latitude and self.longitude:
+            return
+        else:
+            try:
+                geolocator = Nominatim()
+                location = geolocator.geocode('{} {}'.format(self.address, self.zip_code))
+                if location:
+                    self.latitude = location.latitude
+                    self.longitude = location.longitude
+                    super(Location, self).save(*args, **kwargs)
+            except Exception as err:
+                logger.error('There was a problem geocoding this address: {}'.format(err))
+
+
 
 
 class Race(models.Model):
