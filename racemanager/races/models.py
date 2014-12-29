@@ -89,6 +89,7 @@ class Season(models.Model):
         return ('{}-{}'.format(self.opening_year, str(self.closing_year)[2:4]))
 
 
+
 class Organizer(models.Model):
     """
     A person or entity organizing the race.
@@ -114,8 +115,13 @@ class Organizer(models.Model):
         default=''
     )
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
+
+
 
 class Location(models.Model):
     """
@@ -176,7 +182,6 @@ class Location(models.Model):
                     super(Location, self).save(*args, **kwargs)
             except Exception as err:
                 logger.error('There was a problem geocoding this address: {}'.format(err))
-
 
 
 

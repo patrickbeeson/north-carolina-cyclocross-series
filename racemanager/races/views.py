@@ -11,8 +11,8 @@ class RaceDetail(DetailView):
 class CurrentSeasonRaceList(DetailView):
     model = Season
     queryset = Season.current_season.all()
-    template_name = 'upcoming_race_list.html'
+    template_name = 'current_season_race_list.html'
 
 
-class ResultsList(ListView):
-    model = Season
+# class ResultsList(ListView):
+#     model = Season
