@@ -17,5 +17,3 @@ DATABASES = {
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
-
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'

@@ -4,6 +4,7 @@ from localflavor.us.models import USStateField, PhoneNumberField
 
 from django.db import models
 
+from racemanager.utils.validators import validate_file_type
 
 TODAY = datetime.datetime.today()
 CURRENT_MONTH = datetime.datetime.today().month
@@ -14,7 +15,7 @@ class CurrentSeasonManager(models.Manager):
     Manager to get current season specified, or the latest by closing date.
     """
     def get_queryset(self):
-        return super(CurrentSeasonManager, self).get_queryset().filter(is_current_season).latest()[0]
+        return super(CurrentSeasonManager, self).get_queryset().filter(is_current_season=True).latest('closing_year')
 
 
 class UpcomingRaceManager(models.Manager):
@@ -30,8 +31,8 @@ class UpcomingRacesForWeekendManager(models.Manager):
     Manager to get upcoming weekend's races.
     """
     def get_queryset(self):
-        upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
-        lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
+        upper_limit = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
+        lower_limit = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
         return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(date__range=(lower_limit, upper_limit))
 
 
@@ -40,8 +41,8 @@ class UpcomingRacesForMonthManager(models.Manager):
     Manager to get this month's upcoming races after this weekend.
     """
     def get_queryset(self):
-        upper_limit = today + datetime.timedelta(days=(6 - today.weekday()))
-        lower_limit = today + datetime.timedelta(days=(5 - today.weekday()))
+        upper_limit = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
+        lower_limit = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
         return super(UpcomingRacesForMonthManager, self).get_queryset().filter(date__month=CURRENT_MONTH).exclude(date__range=(lower_limit, upper_limit))
 
 
@@ -67,7 +68,8 @@ class Season(models.Model):
     results_upload = models.FileField(
         help_text='Optional. PDF files only.',
         blank=True,
-        default=''
+        default='',
+        validators=[validate_file_type]
     )
     is_current_season = models.BooleanField(
         help_text='Indicates whether the season is the current season displayed',
@@ -92,7 +94,7 @@ class Organizer(models.Model):
         help_text='Limited to 200 characters. Should be a person, ideally.',
         default=''
     )
-    phone = USPhoneNumberField(
+    phone = PhoneNumberField(
         help_text='Optional. Phone numbers must be in XXX-XXX-XXXX format.',
         blank=True,
         null=True
@@ -171,8 +173,8 @@ class Race(models.Model):
     """
     date = models.DateField()
     season = models.ForeignKey(Season)
-    location = ForeignKey(Location)
-    organizer = ForeignKey(Organizer)
+    location = models.ForeignKey(Location)
+    organizer = models.ForeignKey(Organizer)
     description = models.TextField(
         default='A brief description of the race course, ideally.'
     )
@@ -184,7 +186,8 @@ class Race(models.Model):
     flyer_upload = models.FileField(
         help_text='Optional. PDF files only.',
         blank=True,
-        default=''
+        default='',
+        validators=[validate_file_type]
     )
     results_link = models.URLField(
         help_text='Optional.',
@@ -194,7 +197,8 @@ class Race(models.Model):
     results_upload = models.FileField(
         help_text='Optional. PDF files only.',
         blank=True,
-        default=''
+        default='',
+        validators=[validate_file_type]
     )
     objects = models.Manager()
     upcoming_races = UpcomingRaceManager()
