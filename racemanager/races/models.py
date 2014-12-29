@@ -194,7 +194,9 @@ class Race(models.Model):
     location = models.ForeignKey(Location)
     organizer = models.ForeignKey(Organizer)
     description = models.TextField(
-        default='A brief description of the race course, ideally.'
+        help_text='A brief description of the race course, ideally.',
+        default='',
+        blank=True,
     )
     pre_registration_link = models.URLField(
         help_text='Optional.',
