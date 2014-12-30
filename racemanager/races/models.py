@@ -12,6 +12,8 @@ from racemanager.utils.validators import validate_file_type
 
 TODAY = datetime.date.today()
 CURRENT_MONTH = datetime.date.today().month
+UPPER_LIMIT = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
+LOWER_LIMIT = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +72,7 @@ class UpcomingRacesForWeekendManager(models.Manager):
     Manager to get upcoming weekend's races.
     """
     def get_queryset(self):
-        upper_limit = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
-        lower_limit = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
-        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(date__range=(lower_limit, upper_limit))
+        return super(UpcomingRacesForWeekendManager, self).get_queryset().filter(date__range=(LOWER_LIMIT, UPPER_LIMIT))
 
 
 class UpcomingRacesForMonthManager(models.Manager):
@@ -80,9 +80,7 @@ class UpcomingRacesForMonthManager(models.Manager):
     Manager to get this month's upcoming races after this weekend.
     """
     def get_queryset(self):
-        upper_limit = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
-        lower_limit = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
-        return super(UpcomingRacesForMonthManager, self).get_queryset().filter(date__month=CURRENT_MONTH).exclude(date__range=(lower_limit, upper_limit))
+        return super(UpcomingRacesForMonthManager, self).get_queryset().filter(date__month=CURRENT_MONTH).exclude(date__range=(LOWER_LIMIT, UPPER_LIMIT))
 
 
 class Season(models.Model):
