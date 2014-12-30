@@ -234,6 +234,11 @@ class Location(models.Model):
             except Exception as err:
                 logger.error('There was a problem geocoding this address: {}'.format(err))
 
+    @property
+    def has_geocode(self):
+        "Check whether the location has coordinates"
+        if self.latitude and self.longitude:
+            return True
 
 
 class Race(models.Model):
@@ -245,9 +250,8 @@ class Race(models.Model):
     location = models.ForeignKey(Location)
     organizer = models.ForeignKey(Organizer)
     description = models.TextField(
-        help_text='A brief description of the race course, ideally.',
-        default='',
-        blank=True,
+        help_text='A brief description of the race course, ideally. No HTML or formatting is allowed.',
+        default=''
     )
     pre_registration_link = models.URLField(
         help_text='Optional.',

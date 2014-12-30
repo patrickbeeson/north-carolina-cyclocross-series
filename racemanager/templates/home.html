@@ -31,9 +31,7 @@
                 {% if race.pre_registration_link %}
                 <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
                 {% endif %}
-                {% if race.description %}
                 <p class="race_description">{{ race.description }}</p>
-                {% endif %}
                 <p class="race_organizer"><b>Race organizer:</b> {{ race.organizer.name }}, <a href="mailto:{{ race.organizer.email }}">{{ race.organizer.email }}</a>{% if race.organizer.phone %}, {{ race.organizer.phone }}{% endif %}</p>
             </li>
         {% endfor %}

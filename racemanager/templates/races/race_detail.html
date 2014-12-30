@@ -1,6 +1,40 @@
-{% extends 'base_generic.html' %}
+{% extends 'base_race.html' %}
+
+{% block title %}{{ race.date }}: {{ race.location.city }} | North Carolina Cyclo-cross Series{% endblock title %}
 
 {% block content %}
-{{ current_season }}
-    {{ race.date }}
+<section class="race">
+    <div class="race_information">
+        <h2 class="race_title">{{ race.date }}: {{ race.location.city }}</h2>
+        <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
+        <p class="race_organizer"><b>Race organizer:</b> {{ race.organizer.name }}, <a href="mailto:{{ race.organizer.email }}">{{ race.organizer.email }}</a>{% if race.organizer.phone %}, {{ race.organizer.phone }}{% endif %}</p>
+        {% if race.pre_registration_link %}
+        <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
+        {% endif %}
+        {% if race.flyer_upload %}
+        <a class="race_action" href="{{ race.flyer_upload}}">Flyer (download)</a>
+        {% endif %}
+        <p class="race_description">{{ race.description }}</p>
+    </div>
+    <aside class="race_extra">
+        <div class="race_sidebar">
+            <h3 class="sidebar_title">How to get started</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a lorem hendrerit, accumsan arcu quis, vulputate elit. Cras ac imperdiet tellus, vehicula pellentesque turpis. Curabitur pulvinar id sapien eget congue. Cras aliquet placerat quam quis mattis. <a href="">Read more about how to start racing cyclo-cross.</a></p>
+        </div>
+    </aside>
+    {% if race.location.has_geocode %}
+    <div class="race_map">
+        <iframe
+        width="600"
+        height="450"
+        frameborder="0" style="border:0"
+        src="https://www.google.com/maps/embed/v1/view
+        ?key=AIzaSyB60K6SIsS-6sxF51yhUs_fE76VoJW9-Q4
+        &center={{ race.location.latitude }},{{ race.location.longitude }}
+        &zoom=18
+        &maptype=satellite">
+        </iframe>
+    </div>
+    {% endif %}
+</section>
 {% endblock content %}

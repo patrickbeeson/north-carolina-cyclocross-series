@@ -1,0 +1,11 @@
+{% extends 'base_generic.html' %}
+{% load current_season %}
+
+{% block race_nav %}
+<nav role="race">
+    <ul>
+        <li><a href="">Upcoming {{ current_season }} races</a></li>
+        <li><a href="">past races &amp; results</a></li>
+    </ul>
+</nav>
+{% endblock %}
