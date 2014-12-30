@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load current_season %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -19,21 +20,31 @@
 <body>
     <header>
         <h1 class="branding">North Carolina Cyclo-cross</h1>
+        <h2 class="current_season">{% current_season %} Season</h2>
         <nav role="primary_nav">
             <ul>
-                <li><a href="">Races</a></li>
+                <li><a href="{% url 'current_season_race_list' current_season.slug  %}">Races</a></li>
                 <li><a href="">Results</a></li>
                 <li><a href="">About</a></li>
+                <li><a href="">Contact</a></li>
             </ul>
         </nav>
+        <div class="hero_image">
+            <!-- Need to add thumbnailer for hero images -->
+            <img src="http://placehold.it/1700x750" alt="NCCX">
+        </div>
     </header>
     <div class="container">
-    {% block content %}
-
-    {% endblock content %}
+    {% block content %}{% endblock content %}
     </div>
     {% block js %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     {% endblock js %}
+    <div class="container">
+        <footer>
+            <p>The NC Cyclo-cross Series is promoted/organized by the NCCX, a USA Cycling official racing club.</p>
+            <p><a href="tel:8286749782">(828)674-9782</a> &amp; <a href="mailto:timothyhopkin@yahoo.com">timothyhopkin@yahoo.com</a></p>
+        </footer>
+    </div>
 </body>
 </html>
