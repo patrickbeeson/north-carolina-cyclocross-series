@@ -7,7 +7,7 @@ from homepage.views import HomePageView
 from races.models import Season, Organizer, Location, Race
 
 
-class HomePageText(TestCase):
+class HomePageTest(TestCase):
 
     def setUp(self):
         self.request = RequestFactory().get('/')

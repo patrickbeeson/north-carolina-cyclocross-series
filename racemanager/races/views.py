@@ -5,7 +5,9 @@ from races.models import Race, Season
 
 
 class RaceDetailView(DetailView):
-    """ Displays details for a specific race. """
+    """
+    Displays details for a specific race.
+    """
     model = Race
     template_name = 'races/race_detail.html'
 
@@ -17,7 +19,9 @@ class RaceDetailView(DetailView):
 
 
 class CurrentSeasonRaceListView(DetailView):
-    """ Displays races for a given season. """
+    """
+    Displays races for a given season.
+    """
     model = Season
     template_name = 'races/current_season_race_list.html'
 

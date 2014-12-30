@@ -1,10 +1,12 @@
 import datetime
 import logging
+import os
 from geopy.geocoders import Nominatim
 from geopy.exc import GeopyError, GeocoderTimedOut
 from localflavor.us.models import USStateField, PhoneNumberField
 
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from racemanager.utils.validators import validate_file_type
 
@@ -12,6 +14,39 @@ TODAY = datetime.date.today()
 CURRENT_MONTH = datetime.date.today().month
 
 logger = logging.getLogger(__name__)
+
+
+def get_flyers_upload_path(instance, filename):
+    "Customize upload path for race flyers"
+    return os.path.join(
+        "flyers/{season}/{date}/{flyer}".format(
+            season=instance.season,
+            date=instance.date.strftime('%Y_%b_%d'),
+            flyer=filename
+        )
+    )
+
+
+def get_results_upload_path(instance, filename):
+    "Customize upload path for race results"
+    return os.path.join(
+        "results/{season}/{date}/{results}".format(
+            season=instance.season,
+            date=instance.date.strftime('%Y_%b_%d'),
+            results=filename
+        )
+    )
+
+
+def get_season_results_upload_path(instance, filename):
+    "Customize upload path for season results"
+    return os.path.join(
+        "results/{season}/{results}".format(
+            season=instance,
+            results=filename
+        )
+    )
+
 
 
 class CurrentSeasonManager(models.Manager):
@@ -73,6 +108,7 @@ class Season(models.Model):
         help_text='Optional. PDF files only.',
         blank=True,
         default='',
+        upload_to=get_season_results_upload_path,
         validators=[validate_file_type]
     )
     is_current_season = models.BooleanField(
@@ -84,6 +120,9 @@ class Season(models.Model):
 
     class Meta:
         ordering = ['-closing_year']
+
+    def get_absolute_url(self):
+        return reverse('current_season_race_list', args=[str(self.slug)])
 
     def __str__(self):
         return ('{}-{}'.format(self.opening_year, str(self.closing_year)[2:4]))
@@ -207,6 +246,7 @@ class Race(models.Model):
         help_text='Optional. PDF files only.',
         blank=True,
         default='',
+        upload_to=get_flyers_upload_path,
         validators=[validate_file_type]
     )
     results_link = models.URLField(
@@ -218,6 +258,7 @@ class Race(models.Model):
         help_text='Optional. PDF files only.',
         blank=True,
         default='',
+        upload_to=get_results_upload_path,
         validators=[validate_file_type]
     )
     objects = models.Manager()
@@ -227,6 +268,9 @@ class Race(models.Model):
 
     class Meta:
         ordering = ['-date']
+
+    def get_absolute_url(self):
+        return reverse('race_detail', args=[int(self.pk)])
 
     def __str__(self):
         return ('{}, {}'.format(self.date.strftime('%Y %b %d'), self.location.city))
