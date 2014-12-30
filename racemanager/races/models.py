@@ -119,6 +119,22 @@ class Season(models.Model):
     class Meta:
         ordering = ['-closing_year']
 
+    @property
+    def has_results(self):
+        "Determine if season has results available in either form."
+        if self.results_link or self.results_upload:
+            return True
+
+    @property
+    def get_results(self):
+        "Gets the results in whatever form is made available."
+        if self.results_link and self.results_upload:
+            return [self.results_link, self.results_upload]
+        elif self.results_link:
+            return self.results_link
+        elif self.results_upload:
+            return self.results_upload
+
     def get_absolute_url(self):
         return reverse('current_season_race_list', args=[str(self.slug)])
 
@@ -142,9 +158,7 @@ class Organizer(models.Model):
         null=True
     )
     email = models.EmailField(
-        help_text='Optional.',
-        blank=True,
-        default=''
+        default='',
     )
     website = models.URLField(
         help_text='Optional.',
