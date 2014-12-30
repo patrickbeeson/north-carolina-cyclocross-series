@@ -15,12 +15,12 @@ urlpatterns = patterns('',
         name='home'
     ),
     url(
-        r'^seasons/(?P<slug>[\w-]+)/$',
+        r'^races/(?P<slug>[\w-]+)/$',
         CurrentSeasonRaceListView.as_view(),
         name='current_season_race_list'
     ),
     url(
-        r'^races/(?P<pk>\d+)/$',
+        r'^races/(?P<slug>[\w-]+)/(?P<pk>\d+)/$',
         RaceDetailView.as_view(),
         name='race_detail'
     ),
@@ -40,9 +40,9 @@ urlpatterns = patterns('',
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += patterns('django.contrib.flatpages.views',
-    (r'^(?P<url>.*/)$', 'flatpage'),
-)
+# urlpatterns += patterns('django.contrib.flatpages.views',
+#     (r'^(?P<url>.*/)$', 'flatpage'),
+# )
 
 if settings.DEBUG:
     import debug_toolbar

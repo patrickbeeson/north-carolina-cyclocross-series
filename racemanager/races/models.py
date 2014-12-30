@@ -286,7 +286,7 @@ class Race(models.Model):
         ordering = ['-date']
 
     def get_absolute_url(self):
-        return reverse('race_detail', args=[int(self.pk)])
+        return reverse('race_detail', args=[str(self.season.slug), int(self.pk)])
 
     def __str__(self):
         return ('{}, {}'.format(self.date.strftime('%Y %b %d'), self.location.city))
