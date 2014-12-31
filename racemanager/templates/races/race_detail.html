@@ -5,11 +5,21 @@
 {% block content %}
 <section class="race">
     <div class="race_information">
-        <h2 class="race_title">{{ race.date }}: {{ race.location.city }}</h2>
+        <h2 class="race_title">{{ race.date }}: {{ race.location.city }} ({% if race.has_expired %}Expired{% endif %})</h2>
         <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
         <p class="race_organizer"><b>Race organizer:</b> {{ race.organizer.name }}, <a href="mailto:{{ race.organizer.email }}">{{ race.organizer.email }}</a>{% if race.organizer.phone %}, {{ race.organizer.phone }}{% endif %}</p>
-        {% if race.pre_registration_link %}
-        <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
+        {% if race.has_results %}
+            {% if race.get_results|length_is:'2' %}
+            <a class="race_action" href="{{ race.get_results.0 }}">View Results</a>
+            <a class="race_action" href="{{ race.get_results.1 }}">Download Results</a>
+            {% else %}
+            <a class="race_action" href="{{ race.get_results }}">View Results</a>
+            {% endif %}
+        {% endif %}
+        {% if not race.has_expired %}
+            {% if race.pre_registration_link %}
+            <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
+            {% endif %}
         {% endif %}
         {% if race.flyer_upload %}
         <a class="race_action" href="{{ race.flyer_upload}}">Flyer (download)</a>

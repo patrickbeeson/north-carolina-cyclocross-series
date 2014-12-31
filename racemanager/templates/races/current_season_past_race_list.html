@@ -1,36 +1,26 @@
 {% extends 'base_generic.html' %}
 
-{% block title %}Races for the {{ season }} race season | North Carolina Cyclo-cross Series{% endblock title %}
+{% block title %}Past races and results for the {{ season }} race season | North Carolina Cyclo-cross Series{% endblock title %}
 
 {% block content %}
 <section class="races">
-    <div class="upcoming_races">
-        <h2>All races for the {{ season }} season</h2>
+    <div class="past_races">
+        <h2>Past {{ season }} season races</h2>
         <ul class="race_list">
-        {% for race in race_list %}
+            {% for race in race_list %}
             <li class="race">
                 <h3 class="race_title"><a href="{{ race.get_absolute_url }}">{{ race.date }}: {{ race.location.city }}</a></h3>
                 <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
-                {% if not race.has_expired %}
-                    {% if race.pre_registration_link %}
-                    <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
-                    {% endif %}
-                    {% if race.flyer_upload %}
-                    <a class="race_action" href="{{ race.flyer_upload}}">Flyer (download)</a>
-                    {% endif %}
-                {% endif %}
-                {% if race.has_results %}
-                    {% if race.get_results|length_is:'2' %}
-                    <a class="race_action" href="{{ race.get_results.0 }}">View Results</a>
-                    <a class="race_action" href="{{ race.get_results.1 }}">Download Results</a>
-                    {% else %}
-                    <a class="race_action" href="{{ race.get_results }}">View Results</a>
-                    {% endif %}
+                {% if race.get_results|length_is:'2' %}
+                <a class="race_action" href="{{ race.get_results.0 }}">View Results</a>
+                <a class="race_action" href="{{ race.get_results.1 }}">Download Results</a>
+                {% else %}
+                <a class="race_action" href="{{ race.get_results }}">View Results</a>
                 {% endif %}
                 <p class="race_description">{{ race.description }}</p>
                 <p class="race_organizer"><b>Race organizer:</b> {{ race.organizer.name }}, <a href="mailto:{{ race.organizer.email }}">{{ race.organizer.email }}</a>{% if race.organizer.phone %}, {{ race.organizer.phone }}{% endif %}</p>
             </li>
-        {% endfor %}
+            {% endfor %}
         </ul>
     </div>
     <aside class="race_extra">

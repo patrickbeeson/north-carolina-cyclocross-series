@@ -51,3 +51,16 @@ class CurrentSeasonRaceListView(CurrentSeasonMixin, ListView):
         "Filters the queryset for races in a season."
         self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
         return Race.objects.filter(season=self.season)
+
+
+class CurrentSeasonRaceResultsListView(CurrentSeasonMixin, ListView):
+    """
+    Displays a list of past races for a current season.
+    """
+    context_object_name = 'race_list'
+    template_name = 'races/current_season_past_race_list.html'
+
+    def get_queryset(self):
+        "Filters the queryset for past races in a season."
+        self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
+        return Race.past_races.filter(season=self.season)

@@ -51,6 +51,25 @@ def get_season_results_upload_path(instance, filename):
     )
 
 
+class ResultsMixin(object):
+    """
+    Mixin object to allow getting of results across models.
+    """
+
+    def has_results(self):
+        "Determine if results are available in either form."
+        if self.results_link or self.results_upload:
+            return True
+
+    def get_results(self):
+        "Gets the results in whatever form is made available."
+        if self.results_link and self.results_upload:
+            return [self.results_link, self.results_upload]
+        elif self.results_link:
+            return self.results_link
+        elif self.results_upload:
+            return self.results_upload
+
 
 class CurrentSeasonManager(models.Manager):
     """
@@ -58,6 +77,14 @@ class CurrentSeasonManager(models.Manager):
     """
     def get_queryset(self):
         return super(CurrentSeasonManager, self).get_queryset().filter(is_current_season=True).latest('closing_year')
+
+
+class PastRaceManager(models.Manager):
+    """
+    Manager to get past races.
+    """
+    def get_queryset(self):
+        return super(PastRaceManager, self).get_queryset().filter(date__lt=TODAY)
 
 
 class UpcomingRaceManager(models.Manager):
@@ -92,7 +119,7 @@ class UpcomingRacesForNextMonthManager(models.Manager):
         return super(UpcomingRacesForNextMonthManager, self).get_queryset().filter(date__month=NEXT_MONTH).exclude(date__range=(LOWER_LIMIT, UPPER_LIMIT))
 
 
-class Season(models.Model):
+class Season(ResultsMixin, models.Model):
     """
     A season to hold races for a given year range.
     """
@@ -127,22 +154,6 @@ class Season(models.Model):
 
     class Meta:
         ordering = ['-closing_year']
-
-    @property
-    def has_results(self):
-        "Determine if season has results available in either form."
-        if self.results_link or self.results_upload:
-            return True
-
-    @property
-    def get_results(self):
-        "Gets the results in whatever form is made available."
-        if self.results_link and self.results_upload:
-            return [self.results_link, self.results_upload]
-        elif self.results_link:
-            return self.results_link
-        elif self.results_upload:
-            return self.results_upload
 
     @property
     def current_season_has_ended(self):
@@ -257,7 +268,7 @@ class Location(models.Model):
             return True
 
 
-class Race(models.Model):
+class Race(ResultsMixin, models.Model):
     """
     A race within a series.
     """
@@ -298,6 +309,13 @@ class Race(models.Model):
     upcoming_races_for_weekend = UpcomingRacesForWeekendManager()
     upcoming_races_for_month = UpcomingRacesForMonthManager()
     upcoming_races_for_next_month = UpcomingRacesForNextMonthManager()
+    past_races = PastRaceManager()
+
+    @property
+    def has_expired(self):
+        "Function to determine whether the race is in the past"
+        if self.date < TODAY:
+            return True
 
     class Meta:
         ordering = ['-date']

@@ -24,14 +24,14 @@
         <nav role="primary">
             <ul>
                 <li><a href="{% url 'races:current_season_race_list' season.slug  %}">Races</a></li>
-                <li><a href="">Results</a></li>
+                <li><a href="{% url 'races:current_season_past_race_list' season.slug  %}">Results</a></li>
                 <li><a href="">About</a></li>
                 <li><a href="">Contact</a></li>
             </ul>
         </nav>
         <div class="hero_image">
             <!-- Need to add thumbnailer for hero images -->
-            <img src="http://placehold.it/1700x750" alt="NCCX">
+            <!-- <img src="http://placehold.it/1700x750" alt="NCCX"> -->
         </div>
     </header>
     <div class="container">
