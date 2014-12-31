@@ -4,7 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from homepage.views import HomePageView
-from races.views import RaceDetailView, CurrentSeasonRaceListView
 
 admin.site.header = 'NCCX administration'
 
@@ -15,14 +14,8 @@ urlpatterns = patterns('',
         name='home'
     ),
     url(
-        r'^races/(?P<slug>[\w-]+)/$',
-        CurrentSeasonRaceListView.as_view(),
-        name='current_season_race_list'
-    ),
-    url(
-        r'^races/(?P<slug>[\w-]+)/(?P<pk>\d+)/$',
-        RaceDetailView.as_view(),
-        name='race_detail'
+        r'^races/',
+        include('races.urls', namespace='races'),
     ),
     url(
         r'^administration/',

@@ -19,7 +19,10 @@
         <p>Results for the {{ current_season }} season are being tabulated. Check back soon!</p>
     {% endif %}
     </div>
-
+    {{ season.current_season_has_ended }}
+    {% if season.current_season_has_ended %}
+    <p>The cyclo-cross season for {{ season }} has ended.</p>
+    {% else %}
     <div class="races_this_weekend">
         <h2>This weekend</h2>
         {% if weekend_race_list %}
@@ -37,7 +40,7 @@
         {% endfor %}
         </ul>
         {% else %}
-        <p>The {{ current_season }} season has ended. Check back next October for the new schedule!</p>
+        <p>There are no races schedule for this weekend! Please check the schedule for other upcoming races.</p>
         {% endif %}
     </div>
 
@@ -56,9 +59,20 @@
         {% endfor %}
         </ul>
         {% else %}
-        <p>The {{ current_season }} season has ended. Check back next October for the new schedule!</p>
+        <ul class="race_list">
+            {% for race in upcoming_races_for_next_month_list %}
+            <li class="race">
+                <h3 class="race_title">{{ race.date }}: {{ race.location.city }}</h3>
+                <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
+                {% if race.pre_registration_link %}
+                <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
         {% endif %}
     </div>
     <p class="full_race_list">See <a href="">all races</a> for the {{ current_season }} season.</p>
+    {% endif %}
 </section>
 {% endblock content %}

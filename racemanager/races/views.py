@@ -1,11 +1,23 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
+from django.views.generic.base import ContextMixin
 from django.shortcuts import get_object_or_404
 
 from races.models import Race, Season
 
+class CurrentSeasonMixin(ContextMixin):
+    """
+    Adds current season context as a mixin.
+    """
 
-class RaceDetailView(DetailView):
+    def get_context_data(self, **kwargs):
+        "Adds the current season into context."
+        context = super(CurrentSeasonMixin, self).get_context_data(**kwargs)
+        context['season'] = Season.current_season.all()
+        return context
+
+
+class RaceDetailView(CurrentSeasonMixin, DetailView):
     """
     Displays details for a specific race.
     """
@@ -17,14 +29,18 @@ class RaceDetailView(DetailView):
         self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
         return Race.objects.filter(season=self.season)
 
-    def get_context_data(self, **kwargs):
-        "Adds current season into context."
-        context = super(RaceDetailView, self).get_context_data(**kwargs)
-        context['season'] = Season.current_season.all()
-        return context
+
+class SeasonListView(CurrentSeasonMixin, ListView):
+    """
+    Displays a list of all seasons, current and past.
+    """
+    context_object_name = 'season_list'
+    template_name = 'races/season_list.html'
+    queryset = Season.objects.all()
 
 
-class CurrentSeasonRaceListView(ListView):
+
+class CurrentSeasonRaceListView(CurrentSeasonMixin, ListView):
     """
     Displays races for a given season.
     """
@@ -35,9 +51,3 @@ class CurrentSeasonRaceListView(ListView):
         "Filters the queryset for races in a season."
         self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
         return Race.objects.filter(season=self.season)
-
-    def get_context_data(self, **kwargs):
-        "Adds the current season into context."
-        context = super(CurrentSeasonRaceListView, self).get_context_data(**kwargs)
-        context['season'] = self.season
-        return context

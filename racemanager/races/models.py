@@ -12,6 +12,7 @@ from racemanager.utils.validators import validate_file_type
 
 TODAY = datetime.date.today()
 CURRENT_MONTH = datetime.date.today().month
+NEXT_MONTH = (datetime.date.today().month + 1) % 12 or 12
 UPPER_LIMIT = TODAY + datetime.timedelta(days=(6 - TODAY.weekday()))
 LOWER_LIMIT = TODAY + datetime.timedelta(days=(5 - TODAY.weekday()))
 
@@ -83,6 +84,14 @@ class UpcomingRacesForMonthManager(models.Manager):
         return super(UpcomingRacesForMonthManager, self).get_queryset().filter(date__month=CURRENT_MONTH).exclude(date__range=(LOWER_LIMIT, UPPER_LIMIT))
 
 
+class UpcomingRacesForNextMonthManager(models.Manager):
+    """
+    Manager to get next month's upcoming races after this weekend.
+    """
+    def get_queryset(self):
+        return super(UpcomingRacesForNextMonthManager, self).get_queryset().filter(date__month=NEXT_MONTH).exclude(date__range=(LOWER_LIMIT, UPPER_LIMIT))
+
+
 class Season(models.Model):
     """
     A season to hold races for a given year range.
@@ -135,8 +144,15 @@ class Season(models.Model):
         elif self.results_upload:
             return self.results_upload
 
+    @property
+    def current_season_has_ended(self):
+        "Determine if current season has ended"
+        if self.race_set.all():
+            if self.race_set.last().date < TODAY:
+                return True
+
     def get_absolute_url(self):
-        return reverse('current_season_race_list', args=[str(self.slug)])
+        return reverse('season', args=[str(self.slug)])
 
     def __str__(self):
         return ('{}-{}'.format(self.opening_year, str(self.closing_year)[2:4]))
@@ -281,6 +297,7 @@ class Race(models.Model):
     upcoming_races = UpcomingRaceManager()
     upcoming_races_for_weekend = UpcomingRacesForWeekendManager()
     upcoming_races_for_month = UpcomingRacesForMonthManager()
+    upcoming_races_for_next_month = UpcomingRacesForNextMonthManager()
 
     class Meta:
         ordering = ['-date']
