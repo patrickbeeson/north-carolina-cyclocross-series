@@ -1,8 +1,21 @@
-{% extends 'base_race.html' %}
+{% extends 'base_generic.html' %}
 
+{% block title %}Current and past race seasons | North Carolina Cyclo-cross Series{% endblock title %}
 
 {% block content %}
-{% for season in season_list %}
-    {{ season.slug }}
-{% endfor %}
+<section class="seasons">
+    <div class="all_seasons">
+        <ul class="season_list">
+            {% for season in season_list %}
+            <li class="season"><a href="{{ season.get_absolute_url }}">{{ season }}<a/></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <aside class="race_extra">
+        <div class="race_sidebar">
+            <h3 class="sidebar_title">Historical results</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a lorem hendrerit, accumsan arcu quis, vulputate elit. Cras ac imperdiet tellus, vehicula pellentesque turpis. Curabitur pulvinar id sapien eget congue. Cras aliquet placerat quam quis mattis. <a href="">Read more about how to start racing cyclo-cross.</a></p>
+        </div>
+    </aside>
+</section>
 {% endblock content %}

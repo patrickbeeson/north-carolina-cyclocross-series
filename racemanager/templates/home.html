@@ -28,7 +28,7 @@
         <ul class="race_list">
         {% for race in weekend_race_list %}
             <li class="race">
-                <h3 class="race_title">{{ race.date }}: {{ race.location.city }}</h3>
+                <h3 class="race_title"><a href="{{ race.get_absolute_url }}">{{ race.date }}: {{ race.location.city }}</a></h3>
                 <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
                 {% if race.pre_registration_link %}
                 <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
@@ -49,7 +49,7 @@
         <ul class="race_list">
         {% for race in remaining_races_for_month_list %}
             <li class="race">
-                <h3 class="race_title">{{ race.date }}: {{ race.location.city }}</h3>
+                <h3 class="race_title"><a href="{{ race.get_absolute_url }}">{{ race.date }}: {{ race.location.city }}</a></h3>
                 <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
                 {% if race.pre_registration_link %}
                 <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
@@ -61,7 +61,7 @@
         <ul class="race_list">
             {% for race in upcoming_races_for_next_month_list %}
             <li class="race">
-                <h3 class="race_title">{{ race.date }}: {{ race.location.city }}</h3>
+                <h3 class="race_title"><a href="{{ race.get_absolute_url }}">{{ race.date }}: {{ race.location.city }}</a></h3>
                 <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
                 {% if race.pre_registration_link %}
                 <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>

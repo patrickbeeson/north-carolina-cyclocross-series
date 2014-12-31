@@ -152,7 +152,7 @@ class Season(models.Model):
                 return True
 
     def get_absolute_url(self):
-        return reverse('season', args=[str(self.slug)])
+        return reverse('races:current_season_race_list', args=[str(self.slug)])
 
     def __str__(self):
         return ('{}-{}'.format(self.opening_year, str(self.closing_year)[2:4]))
@@ -303,7 +303,7 @@ class Race(models.Model):
         ordering = ['-date']
 
     def get_absolute_url(self):
-        return reverse('race_detail', args=[str(self.season.slug), int(self.pk)])
+        return reverse('races:race_detail', args=[str(self.season.slug), int(self.pk)])
 
     def __str__(self):
         return ('{}, {}'.format(self.date.strftime('%Y %b %d'), self.location.city))

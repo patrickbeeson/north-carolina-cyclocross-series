@@ -1,7 +1,32 @@
 {% extends 'base_generic.html' %}
 
+{% block title %}Races for the {{ season }} race season | North Carolina Cyclo-cross Series{% endblock title %}
+
 {% block content %}
-    {% for race in race_list %}
-        {{ race.date }}
-    {% endfor %}
+<section class="races">
+    <div class="upcoming_races">
+        <ul class="race_list">
+        {% for race in race_list %}
+            <li class="race">
+                <h3 class="race_title"><a href="{{ race.get_absolute_url }}">{{ race.date }}: {{ race.location.city }}</a></h3>
+                <p class="race_address">{{ race.location.address }} (<a href="">directions</a>)</p>
+                {% if race.pre_registration_link %}
+                <a class="race_action" href="{{ race.pre_registration_link}}">Register</a>
+                {% endif %}
+                {% if race.flyer_upload %}
+                <a class="race_action" href="{{ race.flyer_upload}}">Flyer (download)</a>
+                {% endif %}
+                <p class="race_description">{{ race.description }}</p>
+                <p class="race_organizer"><b>Race organizer:</b> {{ race.organizer.name }}, <a href="mailto:{{ race.organizer.email }}">{{ race.organizer.email }}</a>{% if race.organizer.phone %}, {{ race.organizer.phone }}{% endif %}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <aside class="race_extra">
+        <div class="race_sidebar">
+            <h3 class="sidebar_title">How to get started</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a lorem hendrerit, accumsan arcu quis, vulputate elit. Cras ac imperdiet tellus, vehicula pellentesque turpis. Curabitur pulvinar id sapien eget congue. Cras aliquet placerat quam quis mattis. <a href="">Read more about how to start racing cyclo-cross.</a></p>
+        </div>
+    </aside>
+</section>
 {% endblock content %}
