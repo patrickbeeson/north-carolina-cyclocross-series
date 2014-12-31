@@ -10,15 +10,15 @@ class RaceDetailView(DetailView):
     Displays details for a specific race.
     """
     context_object_name = 'race'
-    model = Race
     template_name = 'races/race_detail.html'
 
     def get_queryset(self):
+        "Filters the queryset for races in a season."
         self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
         return Race.objects.filter(season=self.season)
 
     def get_context_data(self, **kwargs):
-        "Adds current season into context"
+        "Adds current season into context."
         context = super(RaceDetailView, self).get_context_data(**kwargs)
         context['season'] = Season.current_season.all()
         return context
@@ -32,10 +32,12 @@ class CurrentSeasonRaceListView(ListView):
     template_name = 'races/current_season_race_list.html'
 
     def get_queryset(self):
+        "Filters the queryset for races in a season."
         self.season = get_object_or_404(Season, slug=self.kwargs['slug'])
         return Race.objects.filter(season=self.season)
 
     def get_context_data(self, **kwargs):
+        "Adds the current season into context."
         context = super(CurrentSeasonRaceListView, self).get_context_data(**kwargs)
         context['season'] = self.season
         return context
