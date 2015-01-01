@@ -34,16 +34,7 @@
     </aside>
     {% if race.location.has_geocode %}
     <div class="race_map">
-        <iframe
-        width="600"
-        height="450"
-        frameborder="0" style="border:0"
-        src="https://www.google.com/maps/embed/v1/view
-        ?key=AIzaSyB60K6SIsS-6sxF51yhUs_fE76VoJW9-Q4
-        &center={{ race.location.latitude }},{{ race.location.longitude }}
-        &zoom=18
-        &maptype=satellite">
-        </iframe>
+        <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ race.location.city }},{{ race.location.state }}&markers=color:red%7Clabel:%7C{{ race.location.latitude }},{{ race.location.longitude }}&scale=2&zoom=10&size=1024x768&key=AIzaSyB60K6SIsS-6sxF51yhUs_fE76VoJW9-Q4">
     </div>
     {% endif %}
 </section>
